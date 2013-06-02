@@ -17,6 +17,10 @@
     => ({:name "John Smith", :age 33}
         {:name "Mary Smith", :age 27})
 
+### Loading untrusted data
+
+**Warning**: It is not safe to load any YAML data received from an untrusted source! See https://code.google.com/p/snakeyaml/wiki/Documentation#Loading_YAML for more.
+
 ## Installation
 
 `clj-yaml` is available as a Maven artifact from [Clojars](http://clojars.org/clj-yaml):
