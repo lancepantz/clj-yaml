@@ -16,9 +16,9 @@
 (defn make-yaml
   [& {:keys [dumper-options]}]
   (if dumper-options
-    (Yaml. (apply make-dumper-options
-                  (mapcat (juxt key val)
-                          dumper-options)))
+    (Yaml. ^DumperOptions (apply make-dumper-options
+                                 (mapcat (juxt key val)
+                                         dumper-options)))
     (Yaml.)))
 
 (defprotocol YAMLCodec
@@ -67,12 +67,12 @@
   (decode [data] data))
 
 (defn generate-string [data & opts]
-  (.dump (apply make-yaml opts)
-         (encode data)))
+  (.dump ^Yaml (apply make-yaml opts)
+         ^Object (encode data)))
 
 (defn parse-string
   ([string keywordize]
      (binding [*keywordize* keywordize]
        (parse-string string)))
   ([string]
-     (decode (.load (make-yaml) string))))
+     (decode (.load ^Yaml (make-yaml) ^String string))))
