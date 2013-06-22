@@ -1,6 +1,6 @@
 (ns clj-yaml.core-test
-  (:use clojure.test)
-  (:use clj-yaml.core))
+  (:refer-clojure :exclude [load])
+  (:use clojure.test clj-yaml.core))
 
 (def nested-hash-yaml
   "root:\n  childa: a\n  childb: \n    grandchild: \n      greatgrandchild: bar\n")
@@ -55,46 +55,46 @@ the-bin: !!binary 0101")
 ? Ken Griff")
 
 (deftest parse-hash
-  (let [parsed (parse-string "foo: bar")]
+  (let [parsed (load "foo: bar")]
     (is (= "bar" (parsed :foo)))))
 
 (deftest parse-nested-hash
-  (let [parsed (parse-string nested-hash-yaml)]
+  (let [parsed (load nested-hash-yaml)]
     (is (= "a"   ((parsed :root) :childa)))
     (is (= "bar" ((((parsed :root) :childb) :grandchild) :greatgrandchild)))))
 
 (deftest parse-list
-  (let [parsed (parse-string list-yaml)]
+  (let [parsed (load list-yaml)]
     (is (= "Casablanca"               (first parsed)))
     (is (= "North by Northwest"       (nth parsed 1)))
     (is (= "The Man Who Wasn't There" (nth parsed 2)))))
 
 (deftest parse-nested-hash-and-list
-  (let [parsed (parse-string hashes-lists-yaml)]
+  (let [parsed (load hashes-lists-yaml)]
     (is (= "A4786"  ((first (parsed :items)) :part_no)))
     (is (= "Dorthy" (first ((nth (parsed :items) 1) :owners))))))
 
 (deftest parse-inline-list
-  (let [parsed (parse-string inline-list-yaml)]
+  (let [parsed (load inline-list-yaml)]
     (is (= "milk"        (first parsed)))
     (is (= "pumpkin pie" (nth   parsed 1)))
     (is (= "eggs"        (nth   parsed 2)))
     (is (= "juice"       (last  parsed)))))
 
 (deftest parse-inline-hash
-  (let [parsed (parse-string inline-hash-yaml)]
+  (let [parsed (load inline-hash-yaml)]
     (is (= "John Smith" (parsed :name)))
     (is (= 33           (parsed :age)))))
 
 (deftest parse-list-of-hashes
-  (let [parsed (parse-string list-of-hashes-yaml)]
+  (let [parsed (load list-of-hashes-yaml)]
     (is (= "John Smith" ((first parsed) :name)))
     (is (= 33           ((first parsed) :age)))
     (is (= "Mary Smith" ((nth parsed 1) :name)))
     (is (= 27           ((nth parsed 1) :age)))))
 
 (deftest hashes-of-lists
-  (let [parsed (parse-string hashes-of-lists-yaml)]
+  (let [parsed (load hashes-of-lists-yaml)]
     (is (= "John Smith"     (first (parsed :men))))
     (is (= "Bill Jones"     (last  (parsed :men))))
     (is (= "Mary Smith"     (first (parsed :women))))
@@ -102,20 +102,20 @@ the-bin: !!binary 0101")
 
 (deftest h-set
   (is (= #{"Mark McGwire" "Ken Griff" "Sammy Sosa"}
-         (parse-string set-yaml))))
+         (load set-yaml))))
 
 (deftest typed-data
-  (let [parsed (parse-string typed-data-yaml)]
+  (let [parsed (load typed-data-yaml)]
     (is (= (Class/forName "[B") (type (:the-bin parsed))))))
 
 (deftest keywordized
   (binding [*keywordize* false]
-    (is  (= "items" (-> hashes-lists-yaml parse-string ffirst))))
-  (is  (= "items" (-> hashes-lists-yaml (parse-string false) ffirst))))
+    (is  (= "items" (-> hashes-lists-yaml load ffirst))))
+  (is  (= "items" (-> hashes-lists-yaml (load false) ffirst))))
 
 (deftest dump-opts
   (let [data [{:age 33 :name "jon"} {:age 44 :name "boo"}]]
     (is (= "- age: 33\n  name: jon\n- age: 44\n  name: boo\n"
-           (generate-string data :dumper-options {:flow-style :block})))
+           (dump data :dumper-options {:flow-style :block})))
     (is (= "[{age: 33, name: jon}, {age: 44, name: boo}]\n"
-           (generate-string data :dumper-options {:flow-style :flow})))))
+           (dump data :dumper-options {:flow-style :flow})))))

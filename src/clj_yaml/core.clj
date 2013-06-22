@@ -1,4 +1,5 @@
 (ns clj-yaml.core
+  (:refer-clojure :exclude [load])
   (:import (org.yaml.snakeyaml Yaml DumperOptions DumperOptions$FlowStyle)))
 
 (def ^{:dynamic true} *keywordize* true)
@@ -16,9 +17,9 @@
 (defn make-yaml
   [& {:keys [dumper-options]}]
   (if dumper-options
-    (Yaml. (apply make-dumper-options
-                  (mapcat (juxt key val)
-                          dumper-options)))
+    (Yaml. ^DumperOptions (apply make-dumper-options
+                                 (mapcat (juxt key val)
+                                         dumper-options)))
     (Yaml.)))
 
 (defprotocol YAMLCodec
@@ -66,13 +67,13 @@
   (encode [data] data)
   (decode [data] data))
 
-(defn generate-string [data & opts]
-  (.dump (apply make-yaml opts)
-         (encode data)))
+(defn dump [data & opts]
+  (.dump ^Yaml (apply make-yaml opts)
+         ^Object (encode data)))
 
-(defn parse-string
+(defn load
   ([string keywordize]
      (binding [*keywordize* keywordize]
-       (parse-string string)))
+       (load string)))
   ([string]
-     (decode (.load (make-yaml) string))))
+     (decode (.load ^Yaml (make-yaml) ^String string))))
