@@ -1,4 +1,4 @@
-(defproject nl.onlinetouch/clj-yaml "0.5.0"
+(defproject clj-yaml "0.5.0"
   :description "YAML encoding and decoding for Clojure using SnakeYAML"
   :url "http://github.com/lancepantz/clj-yaml"
   :dependencies
