@@ -1,5 +1,8 @@
 (ns clj-yaml.core
-  (:import (org.yaml.snakeyaml Yaml DumperOptions DumperOptions$FlowStyle)))
+  (:require [flatland.ordered.map :refer (ordered-map)]
+            [flatland.ordered.set :refer (ordered-set)])
+  (:import (org.yaml.snakeyaml Yaml DumperOptions DumperOptions$FlowStyle)
+           (java.util LinkedHashMap)))
 
 (def ^{:dynamic true} *keywordize* true)
 
@@ -32,9 +35,10 @@
 
   clojure.lang.IPersistentMap
   (encode [data]
-    (into {}
-          (for [[k v] data]
-            [(encode k) (encode v)])))
+    (let [lhm (LinkedHashMap.)]
+      (doseq [[k v] data]
+        (.put lhm (encode k) (encode v)))
+      lhm))
 
   clojure.lang.IPersistentCollection
   (encode [data]
@@ -46,13 +50,13 @@
 
   java.util.LinkedHashMap
   (decode [data]
-    (into {}
+    (into (ordered-map)
           (for [[k v] data]
             [(decode-key k) (decode v)])))
 
   java.util.LinkedHashSet
   (decode [data]
-    (into #{} data))
+    (into (ordered-set) data))
 
   java.util.ArrayList
   (decode [data]
