@@ -54,7 +54,7 @@
   (decode [data]
     (into #{} data))
 
-  java.util.ArrayList
+  java.lang.Iterable
   (decode [data]
     (map decode data))
 
@@ -76,3 +76,10 @@
        (parse-string string)))
   ([string]
      (decode (.load (make-yaml) string))))
+
+(defn parse-all-string
+  ([string keywordize]
+     (binding [*keywordize* keywordize]
+       (parse-all-string string)))
+  ([string]
+     (decode (.loadAll (make-yaml) string))))
