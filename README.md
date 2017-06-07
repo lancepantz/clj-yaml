@@ -1,4 +1,4 @@
-`clj-yaml` provides [YAML](http://yaml.org) encoding and decoding for Clojure via the [SnakeYAML](http://code.google.com/p/snakeyaml/) Java library.
+`clj-yaml` provides [YAML](http://yaml.org) encoding and decoding for Clojure via the [SnakeYAML](https://bitbucket.org/asomov/snakeyaml) Java library.
 
 ## Usage
 
