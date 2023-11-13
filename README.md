@@ -1,5 +1,7 @@
-## Deprecation
+# Deprecation
 This library is no longer maintained. An [actively developed fork](https://github.com/clj-commons/clj-yaml) is suggested.
+
+# Historical README
 
 `clj-yaml` provides [YAML](http://yaml.org) encoding and decoding for Clojure via the [SnakeYAML](http://code.google.com/p/snakeyaml/) Java library.
 
